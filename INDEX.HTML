@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arth Boats • Accrual Support Menu</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body{font-family:'Poppins',sans-serif;}
+    .glow{box-shadow:0 0 10px rgba(99,102,241,.6);}  
+    @media print {.no-print{display:none;}}
+  </style>
+</head>
+<body class="bg-slate-50 text-gray-800">
+  <!-- HERO -->
+  <section class="bg-indigo-700 text-white py-10">
+    <div class="max-w-3xl mx-auto px-6 text-center">
+      <h1 class="text-4xl font-bold tracking-tight">Accrual Accounting Support Options</h1>
+    </div>
+  </section>
+
+  <!-- INFO BAR -->
+  <section class="max-w-4xl mx-auto px-6 py-6">
+    <div class="grid md:grid-cols-2 gap-6 bg-white rounded-xl shadow-lg p-6">
+      <div>
+        <h2 class="font-semibold text-lg mb-1 text-indigo-700">Client</h2>
+        <p><strong>Arth Boats LLC</strong><br>601 NW 12th Ave<br>Pompano Beach, FL 33069</p>
+      </div>
+      <div>
+        <h2 class="font-semibold text-lg mb-1 text-indigo-700">Prepared by</h2>
+        <p><strong>MaxScale Accounting Corp</strong><br>2630 W Broward Blvd, Suite 203‑1796<br>Fort Lauderdale, FL 33312‑1314</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLAN SELECTOR -->
+  <section id="quote" class="max-w-4xl mx-auto px-6 pt-2 pb-16 bg-white rounded-xl shadow-lg">
+    <form id="planForm" class="space-y-8 p-6">
+      <div class="flex items-start p-6 glow border border-indigo-100 rounded-xl">
+        <svg class="w-6 h-6 text-indigo-600 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        <div class="ml-4 w-full">
+          <h2 class="text-xl font-semibold text-indigo-700">Full Accrual Accounting – Excel Track</h2>
+          <ul class="list-disc ml-5 text-sm mt-2 space-y-1">
+            <li>AP/AR, payroll & loan accruals handled</li>
+            <li>Monthly GAAP close with CPA‑ready reports</li>
+            <li>Shared Google Sheet for inventory & WIP</li>
+          </ul>
+          <span class="block mt-3 text-lg font-extrabold">$2,250 / month</span>
+        </div>
+      </div>
+
+      <div class="flex items-start p-6 border border-gray-200 rounded-xl">
+        <input type="checkbox" id="inventory" class="h-5 w-5 mt-1 text-indigo-600" />
+        <label for="inventory" class="ml-4 w-full cursor-pointer select-none">
+          <h2 class="text-xl font-semibold">Inventory & WIP Automation (+$500)</h2>
+          <p class="text-sm mt-2">System setup as needed, overhead posting, monthly reconciliation, video tutorials.</p>
+        </label>
+      </div>
+
+      <div class="flex items-start p-6 border border-gray-200 rounded-xl">
+        <input type="checkbox" id="projects" class="h-5 w-5 mt-1 text-indigo-600" />
+        <label for="projects" class="ml-4 w-full cursor-pointer select-none">
+          <h2 class="text-xl font-semibold">Job & Project Cost Dashboard (+$650)</h2>
+          <p class="text-sm mt-2">QuickBooks Projects, profit per boat, PDF summary, automated reminders.</p>
+        </label>
+      </div>
+
+      <div class="bg-indigo-100 rounded-xl p-6 flex flex-col md:flex-row items-center justify-between">
+        <div class="mb-4 md:mb-0">
+          <p class="font-medium text-indigo-800">Estimated Monthly Investment</p>
+          <p id="monthlyTotal" class="text-4xl font-extrabold text-indigo-900">$2,250</p>
+        </div>
+        <button type="button" id="pdfBtn" class="no-print px-7 py-3 rounded-xl bg-indigo-700 hover:bg-indigo-800 text-white font-semibold transition">Download PDF Quote</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Hidden PDF template -->
+  <div id="pdfTemplate" style="display:none;font-family:'Poppins',sans-serif;color:#1f2937;">
+    <h2 style="color:#4f46e5;font-size:24px;font-weight:700;margin-bottom:8px;">Accrual Accounting Proposal</h2>
+    <p><strong>Client:</strong> Arth Boats LLC</p>
+    <p><strong>Prepared by:</strong> MaxScale Accounting Corp</p>
+    <hr style="margin:12px 0;">
+    <ul id="pdfLines" style="font-size:13px;margin-left:16px;"></ul>
+    <hr style="margin:12px 0;">
+    <p style="font-size:16px;font-weight:700;">Estimated Monthly Investment: <span id="pdfTotal"></span></p>
+  </div>
+
+  <script>
+    const inventoryChk=document.getElementById('inventory');
+    const projectsChk=document.getElementById('projects');
+    const monthlyTotalEl=document.getElementById('monthlyTotal');
+    const pdfBtn=document.getElementById('pdfBtn');
+    const pdfLines=document.getElementById('pdfLines');
+    const pdfTotal=document.getElementById('pdfTotal');
+
+    function updateTotals(){
+      let m=2250; pdfLines.innerHTML='';
+      pdfLines.innerHTML+='<li>Full Accrual Accounting – Excel Track · <strong>$2,250</strong></li>';
+      if(inventoryChk.checked){m+=500; pdfLines.innerHTML+='<li>Inventory & WIP Automation · <strong>$500</strong></li>';}
+      if(projectsChk.checked){m+=650; pdfLines.innerHTML+='<li>Job & Project Cost Dashboard · <strong>$650</strong></li>';}
+      pdfTotal.textContent='$'+m.toLocaleString();
+      monthlyTotalEl.textContent='$'+m.toLocaleString();
+    }
+    inventoryChk.addEventListener('change',updateTotals);
+    projectsChk.addEventListener('change',updateTotals);
+    updateTotals();
+
+    pdfBtn.addEventListener('click',()=>{
+      updateTotals();
+      const { jsPDF } = window.jspdf;
+      const doc=new jsPDF({orientation:'portrait',unit:'pt',format:'a4'});
+      doc.html(document.getElementById('pdfTemplate'),{
+        margin:40,
+        autoPaging:'text',
+        callback:function(pdf){pdf.save('ArthBoats_AccrualQuote.pdf');}
+      });
+    });
+  </script>
+
+  <footer class="text-center text-xs py-6 text-gray-500 no-print">© 2025 MaxScale Accounting Corp · Excellence in Marine Finance</footer>
+</body>
+</html>
+
+
